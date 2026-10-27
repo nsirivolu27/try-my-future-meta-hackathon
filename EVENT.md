@@ -12,7 +12,7 @@
 ## Actions remaining
 
 - Complete the personal credit claim and Meta account setup; confirm credits and create the server API key.
-- Follow the [October 28–29 build plan](README.md).
+- Follow the [current progress and next steps](README.md).
 - Check final rules, submission format and repository-visibility requirements before submitting.
 
 The credit-claim form and the project submission are separate. No project submission has been sent. This summary omits personal account details and the full email text.
