@@ -2,7 +2,7 @@
 
 ## Automated checks
 
-`npm test`: 29 passing behavior tests. The original 20 cover campus planning, retrieval, journal, directory and field activities. Nine new tests cover trusted campus context, generic-directory limits, citation validation, selected-institution URL boundaries, the Muse HTTP contract with an injected fake provider, setup/credit/network failures, client payload validation a cancelled-native-answer regression and an actual loopback HTTP pairing/origin test. The fake-provider tests are not evidence of successful Meta API access.
+`npm test`: 36 passing behavior tests. Seven tour tests cover preference-sensitive selection, location-sensitive ordering, budgets, invalid GPS fixes, directory-only fallback, official map provenance and GPS exclusion from Meta context. The original 20 cover campus planning, retrieval, journal, directory and field activities. Nine new tests cover trusted campus context, generic-directory limits, citation validation, selected-institution URL boundaries, the Muse HTTP contract with an injected fake provider, setup/credit/network failures, client payload validation a cancelled-native-answer regression and an actual loopback HTTP pairing/origin test. The fake-provider tests are not evidence of successful Meta API access.
 
 `npx --no-install tsc --noEmit`: checks all shared/browser JavaScript with strict TypeScript checking and the native bridge declaration.
 
@@ -75,3 +75,15 @@ The product scope is nationwide. UC San Diego, UT Austin and UVA are the first d
 - The directory initially prompts for a query/state instead of showing an arbitrary school shortlist.
 - Selecting a result opens a separate visit-plan screen; browser verified the search → plan → home flow.
 - Android debug build and lint passed after the DAT upgrade. Lint retains six non-blocking dependency/target/backup-configuration warnings.
+
+
+## Personalized starting-point flow · October 27
+
+- Search → Try My Future @ college → major, interests, focus and time → current location or nearby landmark → suggested start and ordered stops → visit.
+- Official campus map points cover the existing 12 stops at UCSD, UT Austin and UVA. These are building reference points, not verified entrances. The nationwide directory does not yet provide mapped tours elsewhere.
+- The local planner exhaustively evaluates subsets/orders of up to eight sourced candidates, capped at 2/3/4 stops for 20/40/60 minutes. It rewards early subject/interest matches and variety, penalizes travel, and checks a budget using eight minutes per stop plus straight-line distance × 1.4 at 70 metres/minute. This is a planning heuristic, not an optimal or field-verified pedestrian route.
+- GPS is requested once by user action, kept only in memory, and omitted from persistence, journal export, Meta requests and Maps URLs. Maps receives only the destination pin and handles its own origin permission. Denied/unavailable, inaccurate (>100 m), stale (>2 minutes), and distant (>3 km from all mapped stops) fixes do not produce a claim of a nearby campus start. Distance thresholds are not campus boundaries.
+- Android uses foreground location permission for the bundled app origin only. Physical Android GPS/permission testing is still pending.
+- Browser checked: major/interests + manual Newcomb Hall origin produces a plan, Start opens its first stop, and Maps links contain the destination and walking mode. Real GPS and real walking paths have not been field-tested.
+
+- At a 390 × 844 browser viewport, the visit layout has no horizontal overflow. The recommended order and major survive reload; entering a new campus clears the previous route. Harvard was checked for an explicit unmapped activity fallback and no location request.

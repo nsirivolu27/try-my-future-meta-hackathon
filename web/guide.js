@@ -1,6 +1,6 @@
 /** @typedef {{title:string,url:string,reviewedAt?:string|null}} GuideSource */
 /** @typedef {{text:string,sources:GuideSource[],grounded:boolean,model:string,searched:boolean}} GuideAnswer */
-/** @typedef {{campusId:string,stopId:string,question:string,interest:string,history:{question:string,answer:string}[]}} GuideQuestion */
+/** @typedef {{campusId:string,stopId:string,question:string,interest:string,major?:string,interests?:string,history:{question:string,answer:string}[]}} GuideQuestion */
 /** @type {Map<string,{resolve:(value:GuideAnswer)=>void,reject:(error:Error)=>void,cleanup:()=>void}>} */
 const pending=new Map();
 

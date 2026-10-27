@@ -1,6 +1,6 @@
 /** @typedef {import('./data.js').Campus} Campus */
 /** @typedef {import('./data.js').Stop} Stop */
-/** @typedef {{interest:string,lifestyle:string,minutes:number}} Profile */
+/** @typedef {{interest:string,lifestyle:string,minutes:number,major?:string,interests?:string}} Profile */
 /** @typedef {{id:string,campusId:string,stopId:string,text:string,kind:string,createdAt:string}} Memory */
 
 /** Suggested discovery order; deliberately not a walking-route optimizer.

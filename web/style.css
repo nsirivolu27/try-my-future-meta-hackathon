@@ -1,4 +1,9 @@
 @font-face{font-family:'Source Sans 3';src:url('source-sans-3.ttf') format('truetype');font-style:normal;font-weight:200 900;font-display:swap}
+.future-heading{padding:28px 0 12px}.future-heading h1{overflow-wrap:anywhere}.future-heading>p:last-child{color:var(--muted)}
+.personal-plan{padding-top:0;display:grid;gap:20px}.personal-plan input,.personal-plan textarea,.personal-plan select{font-size:16px;width:100%}.personal-plan label{font-size:14px}
+.tour-location{padding:20px 0 0;border-top:1px solid var(--line)}.tour-location h2{font-size:22px}.tour-location label{margin-top:16px}.tour-location .fine{margin-top:12px}
+.tour-result,.tour-next{padding:24px 0;border-top:1px solid var(--line);scroll-margin-top:20px}.tour-result h2,.tour-next h2{font-size:25px}.tour-distance{color:var(--brand);font-weight:600}
+.tour-order{padding-left:24px;margin:24px 0}.tour-order li{padding:0 0 18px 8px}.tour-order li::marker{color:var(--brand);font-weight:600}.tour-order p{color:var(--muted);margin:4px 0 0;font-size:14px}.map-link{display:inline-flex;text-decoration:none;margin:8px 0;max-width:100%;white-space:normal}
 :root{--paper:#edf2f9;--panel:#fff;--ink:#122b50;--muted:#63738a;--brand:#173e7a;--brand-soft:#edf2fa;--line:#d6dfec;--accent:#c79a39;--gold-soft:#f6efdf;--gold-ink:#80611f;--white:#fff;--coast:#edf3fa;--austin:#f5efdf;--grounds:#edf0f8;--font:'Source Sans 3','Segoe UI',Arial,sans-serif}
 
 *{box-sizing:border-box}

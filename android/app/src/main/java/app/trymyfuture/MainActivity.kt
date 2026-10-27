@@ -11,6 +11,8 @@ import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import android.util.Base64
 import android.webkit.JavascriptInterface
+import android.webkit.GeolocationPermissions
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -58,6 +60,14 @@ class MainActivity : AppCompatActivity() {
     private var voiceJob: Job? = null
     private var voiceId = ""
     private var phoneVoiceId = ""
+    private var locationCallback: GeolocationPermissions.Callback? = null
+    private var locationOrigin: String? = null
+    private val locationPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+        val allowed = result[Manifest.permission.ACCESS_FINE_LOCATION] == true || result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        locationCallback?.invoke(locationOrigin, allowed, false)
+        locationCallback = null
+        locationOrigin = null
+    }
     private val voiceBluetoothPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted && voiceId.isNotEmpty()) listenWithGlasses(voiceId)
         else emit("error", "Nearby devices permission is needed to hear your Meta glasses.")
@@ -100,12 +110,31 @@ class MainActivity : AppCompatActivity() {
         web.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
+            setGeolocationEnabled(true)
             allowFileAccess = false
             allowContentAccess = false
             setSupportMultipleWindows(false)
             mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
         }
         web.addJavascriptInterface(NativeBridge(), "FutureNative")
+        web.webChromeClient = object : WebChromeClient() {
+            override fun onGeolocationPermissionsShowPrompt(origin: String, callback: GeolocationPermissions.Callback) {
+                // Only bundled app content can request a one-shot foreground location.
+                if (origin.trimEnd('/') != "https://$HOST") { callback.invoke(origin, false, false); return }
+                val allowed = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                if (allowed) { callback.invoke(origin, true, false); return }
+                locationCallback?.invoke(locationOrigin, false, false)
+                locationCallback = callback
+                locationOrigin = origin
+                locationPermission.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+            }
+            override fun onGeolocationPermissionsHidePrompt() {
+                locationCallback?.invoke(locationOrigin, false, false)
+                locationCallback = null
+                locationOrigin = null
+            }
+        }
         web.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse {
                 val uri = request.url
@@ -371,6 +400,8 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
     override fun onDestroy() {
+        locationCallback?.invoke(locationOrigin, false, false)
+        locationCallback = null
         stopVoice(); guide.close()
         wantsConnection = false
         releaseSource()
@@ -381,6 +412,6 @@ class MainActivity : AppCompatActivity() {
     }
     companion object {
         private const val HOST = "appassets.androidplatform.net"
-        private val ASSETS = setOf("index.html", "app.js", "guide.js", "core.js", "data.js", "fieldwork.js", "falling-block.svg", "directory-data.js", "directory.js", "devices.js", "campus.svg", "style.css", "source-sans-3.ttf", "ucsd.svg", "ut.svg", "uva.svg")
+        private val ASSETS = setOf("index.html", "app.js", "guide.js", "core.js", "tour.js", "tour-data.js", "data.js", "fieldwork.js", "falling-block.svg", "directory-data.js", "directory.js", "devices.js", "campus.svg", "style.css", "source-sans-3.ttf", "ucsd.svg", "ut.svg", "uva.svg")
     }
 }

@@ -6,15 +6,15 @@ The idea: **Try My Future @ [college]** — explore a campus around your prospec
 
 ## Progress · October 27
 
-- Built: search across 5,877 institutions, visit activities, local notes and visit comparison. Detailed sourced guides currently cover three campuses.
+- Built: search across 5,877 institutions, major/interests setup, location-aware tour planning, notes and visit comparison. Mapped stops currently cover three campuses; other schools offer visit activities.
 - Implemented: Muse Spark Q&A and experimental Android / Meta glasses integration. **Live AI and physical glasses testing remain pending.**
-- Checked locally: 29 tests, type checking, browser and Android builds, and Android lint passed.
+- Checked locally: 36 tests, type checking, browser and Android builds, and Android lint passed.
 
 ## Next
 
 - Complete the $150 credit claim, billing and API-key setup.
 - Test a real campus conversation through Gen 2 glasses.
-- Build major and personal-interest onboarding, a verified starting point and personalized tour stops. Walking navigation is not implemented.
+- Expand mapped stops and field-test routes. Google Maps handles walking directions; in-app estimates are approximate.
 
 [Event checklist](EVENT.md) · [Validation details](docs/VALIDATION.md)
 
