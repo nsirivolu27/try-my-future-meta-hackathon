@@ -1,9 +1,10 @@
 <resources>
     <style name="Theme.TryMyFuture" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:fontFamily">sans</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">#173e7a</item>
-        <item name="android:navigationBarColor">#173e7a</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">#ffffff</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarColor">#ffffff</item>
         <item name="android:windowActionModeOverlay">true</item>
     </style>
 </resources>

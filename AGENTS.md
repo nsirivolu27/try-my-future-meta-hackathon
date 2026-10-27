@@ -5,7 +5,7 @@ This is a standalone Android campus-visit app with an offline browser UI, not Fa
 - Keep campus planning, retrieval, directory search and journal rules pure and behavior-tested.
 - Do not invent campus facts, vendor SDKs, device support, tour access, model accuracy or hackathon requirements.
 - Distinguish federal institution directory coverage from manually sourced guides. Preserve UNITIDs and existing journal IDs.
-- Use CSS color tokens. Keep the interface compact and app-oriented, with the blue/white/gold visual identity.
+- Use CSS color tokens. Keep the interface compact and app-oriented, with a light conversational layout, blue controls and a subtle gold accent in the original logo. Do not add UI screenshots to the submission or README until requested.
 - No new runtime web dependencies without a concrete need. Python importer uses the standard library.
 - Vendor camera integrations implement CaptureSource. Audio-only operation must work without registering a camera vendor.
 - Run npm test, strict TypeScript checking, and npm run build. Rebuild Android when native code or bundled assets change.

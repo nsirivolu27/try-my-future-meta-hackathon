@@ -10,3 +10,6 @@ node_modules/
 data/raw/
 data/*.tmp
 __pycache__/
+
+# UI captures are local review material until the design is approved.
+docs/screenshots/

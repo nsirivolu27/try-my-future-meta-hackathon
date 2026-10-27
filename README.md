@@ -2,9 +2,7 @@
 
 Dedicated Meta event workspace. See [event preparation](EVENT.md) and the [submission draft](docs/SUBMISSION.md).
 
-**Imagine your everyday at college.** An Android campus-visit companion for prospective students, transfer students and anyone exploring their next school. Blue, white and gold, with a falling block-person logo and Source Sans 3 typography; built as a compact app with a campus directory, personal visits, field notes and comparison.
-
-![Try My Future phone preview](docs/screenshots/explore.png)
+**Imagine your everyday at college.** An Android campus-visit companion for prospective students, transfer students and anyone exploring their next school. A light, conversational interface with blue accents, the falling block-person logo and Source Sans 3 typography; built as a compact app with a campus directory, personal visits, field notes and comparison.
 
 ## Current scope
 

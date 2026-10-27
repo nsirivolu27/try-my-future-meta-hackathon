@@ -10,7 +10,7 @@ Students visiting colleges collect facts and photos, but often struggle to remem
 Search for a school, select your interests, and start a visit. Listen through your phone or compatible audio glasses, reflect on what you notice, capture your thoughts and compare visits. Sourced campus guides add specific places and context as content coverage grows.
 
 ## Built in this prototype
-- Android app and browser preview with a compact blue/white/gold interface.
+- Android app and browser preview with a compact, conversational interface with blue accents.
 - Searchable offline federal directory of 5,877 institutions, SQLite database and repeatable import with provenance.
 - Self-guided reflections and journal for listed institutions; three sourced pilot guides at UCSD, UT Austin and UVA.
 - Hardware-independent audio mode, Android narration/dictation, and the first Meta camera adapter.

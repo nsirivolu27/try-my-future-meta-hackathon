@@ -48,3 +48,10 @@ The product scope is nationwide. UC San Diego, UT Austin and UVA are the first d
 - Source Sans 3 loads from the bundled font; the 390 × 844 mobile layout has no horizontal overflow and its home primary action clears the bottom navigation.
 - A draft concern and its category survive marking an activity complete; completion updates the visit progress.
 - The falling block-person logo appears in the app header; the same design is packaged as the Android launcher icon.
+
+## Conversational interface revision
+
+- Open activity text, icon navigation, rounded controls and white Android system bars replace the earlier ruled layout.
+- Home preferences are expandable; the campus question composer is visible during a visit, with a separate voice action.
+- Browser question check: asking about study spaces during the UVA visit returns the sourced Shannon Library answer.
+- UI screenshots are omitted from the event repository and README while design work continues.
