@@ -1,0 +1,23 @@
+name: Validate prototype
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  shared-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - run: npx --yes --package typescript@5.9.3 tsc --noEmit
+      - run: npm run build
+      - name: Check database and exported row count
+        run: |
+          python - <<'PY'
+          import json, sqlite3
+          db = sqlite3.connect('data/campuses.sqlite')
+          assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
+          assert db.execute('SELECT count(*) FROM campuses').fetchone()[0] == json.load(open('data/provenance.json'))['count']
+          PY

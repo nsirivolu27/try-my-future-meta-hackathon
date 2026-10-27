@@ -1,0 +1,12 @@
+dist/
+android/.gradle/
+android/.kotlin/
+android/local.properties
+android/**/build/
+android/app/src/main/assets/
+*.apk
+node_modules/
+
+data/raw/
+data/*.tmp
+__pycache__/

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173e7a">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Try My Future — Find your place</title>
+  <link rel="icon" type="image/svg+xml" href="falling-block.svg">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar"><a href="#explore" class="brand" aria-label="Try My Future home"><img class="brand-icon" src="falling-block.svg" alt=""> try my future</a><button id="device-open" class="device-pill"><span class="status-dot"></span><span id="device-label">Glasses</span></button></header>
+  <main id="main"></main>
+  <nav class="bottom-nav" aria-label="Main navigation"><a href="#explore" data-nav="explore"><span class="nav-index">01</span><span>Explore</span></a><a href="#visit" data-nav="visit"><span class="nav-index">02</span><span>My visit</span></a><a href="#journal" data-nav="journal"><span class="nav-index">03</span><span>Journal</span><span id="note-count">0</span></a><a href="#compare" data-nav="compare"><span class="nav-index">04</span><span>Compare</span></a></nav>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <dialog id="device-dialog"><button class="close" id="device-close" aria-label="Close device settings">×</button><p class="eyebrow">YOUR COMPANION</p><h2>Your glasses.<br>Your guide.</h2><div class="glasses-art" aria-hidden="true">◯—◯</div><label for="device-mode">How would you like to connect?<select id="device-mode"><option value="audio">Audio glasses / Bluetooth</option><option value="meta">Meta glasses / camera + audio</option></select></label><p class="fine">Works on your phone and with glasses that support standard Android Bluetooth media audio. Camera and display features depend on each brand’s SDK.</p><p id="device-status" role="status"></p><div class="button-row"><button id="test-audio" class="primary">▷ Test audio</button><button id="audio-settings" class="secondary">Bluetooth settings</button></div><div class="button-row" id="camera-buttons" hidden><button id="connect" class="primary">Connect Meta camera</button><button id="disconnect" class="secondary">Disconnect</button></div><p class="fine" id="meta-instructions" hidden>Pair in Meta AI and enable Developer Mode first. Capture is temporary and only starts when you tap Capture. Building recognition is not enabled. This adapter requires physical-device testing.</p><p class="fine">Other camera brands are not integrated yet. Voice input uses Android’s speech service and may use your phone microphone.</p></dialog>
+</body>
+</html>
