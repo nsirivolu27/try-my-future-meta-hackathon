@@ -13,3 +13,6 @@ __pycache__/
 
 # UI captures are local review material until the design is approved.
 docs/screenshots/
+.env*
+!.env.example
+.tmf/

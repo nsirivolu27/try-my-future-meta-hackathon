@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.media.AudioAttributes
 import android.os.Build
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -30,6 +31,7 @@ import kotlin.coroutines.resume
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.json.JSONObject
@@ -50,6 +52,16 @@ class MainActivity : AppCompatActivity() {
     private var permissionContinuation: CancellableContinuation<PermissionStatus>? = null
     private var pendingExport: String? = null
     private var lastStatus = "Not connected. Tap Connect to begin."
+    private val guide = GuideClient()
+    private val guideJobs = mutableMapOf<String, Job>()
+    private var voice: GlassesVoice? = null
+    private var voiceJob: Job? = null
+    private var voiceId = ""
+    private var phoneVoiceId = ""
+    private val voiceBluetoothPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted && voiceId.isNotEmpty()) listenWithGlasses(voiceId)
+        else emit("error", "Nearby devices permission is needed to hear your Meta glasses.")
+    }
 
     private val permissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
         if (result.values.all { it }) initializeAndConnect()
@@ -60,11 +72,13 @@ class MainActivity : AppCompatActivity() {
         permissionContinuation = null
     }
     private val voiceInput = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val id = phoneVoiceId
+        phoneVoiceId = ""
         if (result.resultCode == RESULT_OK) {
             val text = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()
-            if (!text.isNullOrBlank()) emit("transcript", text)
+            if (!text.isNullOrBlank() && id == voiceId) send(JSONObject().put("type", "transcript").put("id", id).put("text", text.take(1000)))
             else emit("error", "No speech was recognized. Try again or type your thought.")
-        }
+        } else emit("error", "Dictation cancelled. Tap the microphone when you are ready.")
     }
     private val exportDocument = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         val text = pendingExport
@@ -126,6 +140,7 @@ class MainActivity : AppCompatActivity() {
         narrator = TextToSpeech(this) { result ->
             speechReady = result == TextToSpeech.SUCCESS
             if (speechReady) {
+                narrator?.setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build())
                 val availability = narrator?.setLanguage(Locale.US)
                 speechReady = availability != TextToSpeech.LANG_MISSING_DATA && availability != TextToSpeech.LANG_NOT_SUPPORTED
             }
@@ -138,6 +153,7 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface fun selectProvider(value: String) = runOnUiThread {
             val next = if (value == "meta") "meta" else "audio"
             if (provider != next) {
+                stopVoice()
                 wantsConnection = false
                 releaseSource()
                 provider = next
@@ -150,6 +166,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         @JavascriptInterface fun connect() = runOnUiThread {
+            stopVoice()
             if (provider != "meta" || preparation?.isActive == true || ready) return@runOnUiThread
             wantsConnection = true
             val required = mutableListOf(Manifest.permission.CAMERA)
@@ -157,6 +174,7 @@ class MainActivity : AppCompatActivity() {
             permissions.launch(required.toTypedArray())
         }
         @JavascriptInterface fun disconnect() = runOnUiThread {
+            stopVoice()
             wantsConnection = false
             releaseSource()
             status("Disconnected. Your campus visit is still available.", false)
@@ -178,23 +196,107 @@ class MainActivity : AppCompatActivity() {
             }
         }
         @JavascriptInterface fun speak(text: String) = runOnUiThread {
+            stopVoice()
             if (!speechReady) { emit("error", "Android speech is not ready. Check installed text-to-speech voices."); return@runOnUiThread }
             val result = narrator?.speak(text.take(3500), TextToSpeech.QUEUE_FLUSH, null, "campus-guide")
             if (result == TextToSpeech.ERROR) emit("error", "Narration could not start. You can read the text on screen.")
         }
         @JavascriptInterface fun stopSpeaking() = runOnUiThread { narrator?.stop(); Unit }
-        @JavascriptInterface fun listen() = runOnUiThread {
+        @JavascriptInterface fun listen(id: String) = runOnUiThread {
+            if (id.length > 80) return@runOnUiThread
+            if (phoneVoiceId.isNotEmpty() || permissionContinuation != null) { emit("error", "Finish the current speech or permission dialog first."); return@runOnUiThread }
+            stopVoice()
+            voiceId = id
             narrator?.stop()
+            if (provider == "meta") {
+                if (Build.VERSION.SDK_INT >= 31 && checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != android.content.pm.PackageManager.PERMISSION_GRANTED) voiceBluetoothPermission.launch(Manifest.permission.BLUETOOTH_CONNECT)
+                else listenWithGlasses(id)
+                return@runOnUiThread
+            }
+            phoneVoiceId = id
+            emit("speech-status", "Android dictation. The phone microphone may be used.")
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                 .putExtra(RecognizerIntent.EXTRA_PROMPT, "Ask a question, or remember a thought")
             runCatching { voiceInput.launch(intent) }
-                .onFailure { emit("error", "No speech recognition service is available. You can type instead.") }
+                .onFailure { phoneVoiceId = ""; emit("error", "No speech recognition service is available. You can type instead.") }
         }
+        @JavascriptInterface fun stopListening() = runOnUiThread { stopVoice() }
+        @JavascriptInterface fun askGuide(id: String, question: String) = runOnUiThread {
+            if (id.length > 80 || question.length > 16000 || guideJobs.containsKey(id)) return@runOnUiThread
+            guideJobs[id] = lifecycleScope.launch {
+                try {
+                    val answer = guide.request(id, "ask", question)
+                    send(JSONObject().put("type", "guide-answer").put("id", id).put("data", answer.toString()))
+                } catch (cancelled: CancellationException) { throw cancelled }
+                catch (error: Exception) { send(JSONObject().put("type", "guide-error").put("id", id).put("text", guideFailure(error))) }
+                finally { guideJobs.remove(id) }
+            }
+        }
+        @JavascriptInterface fun cancelGuide(id: String) = runOnUiThread { guideJobs.remove(id)?.cancel(); guide.cancel(id) }
+        @JavascriptInterface fun pairGuide(code: String) = runOnUiThread {
+            if (!code.matches(Regex("[0-9]{8}"))) { emit("guide-status", "Enter the 8-digit pairing code from your computer."); return@runOnUiThread }
+            lifecycleScope.launch {
+                try { guide.token = guide.request("pair", "pair", JSONObject().put("code", code).toString()).getString("token"); checkGuide() }
+                catch (error: Exception) { emit("guide-status", guideFailure(error)) }
+            }
+        }
+        @JavascriptInterface fun guideStatus() = runOnUiThread { lifecycleScope.launch { checkGuide() } }
         @JavascriptInterface fun exportJournal(text: String) = runOnUiThread {
             if (text.length > 500_000 || pendingExport != null) return@runOnUiThread
             pendingExport = text
             exportDocument.launch("try-my-future-journal.json")
+        }
+    }
+
+    private fun guideFailure(error: Exception): String = if (error is IllegalStateException) error.message ?: "The guide is unavailable."
+        else "Cannot reach the guide server. Connect USB, run adb reverse tcp:4317 tcp:4317, and keep npm run dev running."
+
+    private suspend fun checkGuide() {
+        try {
+            val result = guide.request("status", "status")
+            emit("guide-status", if (!result.optBoolean("configured")) "Muse Spark · add your API key on the computer"
+                else if (guide.token.isEmpty()) "Muse Spark · enter the USB pairing code"
+                else "Muse Spark · paired, ready to ask")
+        } catch (error: Exception) { emit("guide-status", guideFailure(error)) }
+    }
+
+    private fun stopVoice() {
+        voiceId = ""
+        voiceJob?.cancel(); voiceJob = null
+        voice?.release(); voice = null
+    }
+
+    private fun listenWithGlasses(id: String) {
+        wantsConnection = false
+        releaseSource()
+        status("Voice mode. Camera is idle; tap Connect again for photographs.", false)
+        voiceJob = lifecycleScope.launch {
+            try {
+                if (!initialized) Wearables.initialize(applicationContext).onSuccess { initialized = true }
+                check(initialized) { "Could not initialize Meta glasses. Install Meta AI and enable Developer Mode." }
+                if (Wearables.registrationState.value != RegistrationState.REGISTERED) {
+                    Wearables.startRegistration(this@MainActivity)
+                    emit("speech-status", "Finish registration in Meta AI, then tap the microphone again.")
+                    return@launch
+                }
+                val listener = GlassesVoice(); voice = listener
+                val text = listener.listen(
+                    requestPermission = { permission ->
+                        suspendCancellableCoroutine { continuation ->
+                            permissionContinuation = continuation
+                            continuation.invokeOnCancellation { permissionContinuation = null }
+                            wearablePermission.launch(permission)
+                        }
+                    },
+                    onPartial = { partial -> send(JSONObject().put("type", "speech-partial").put("id", id).put("text", partial)) },
+                    onStatus = { emit("speech-status", it) },
+                )
+                if (voiceId == id) send(JSONObject().put("type", "transcript").put("id", id).put("text", text))
+            } catch (_: TimeoutCancellationException) { emit("error", "No question arrived from the glasses. Tap the microphone and try again.") }
+            catch (cancelled: CancellationException) { throw cancelled }
+            catch (error: Exception) { emit("error", error.message ?: "Glasses speech failed. Try phone dictation or type your question.") }
+            finally { if (voiceId == id) { voice?.release(); voice = null } }
         }
     }
 
@@ -257,6 +359,8 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onStop() {
         narrator?.stop()
+        if (permissionContinuation == null && phoneVoiceId.isEmpty()) stopVoice()
+        guideJobs.values.toList().forEach { it.cancel() }; guideJobs.clear(); guide.close()
         // Meta registration/permission switches activities; let those handshakes return.
         val startingCamera = initialized && preparation?.isActive == true &&
             permissionContinuation == null && Wearables.registrationState.value == RegistrationState.REGISTERED
@@ -267,6 +371,7 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
     override fun onDestroy() {
+        stopVoice(); guide.close()
         wantsConnection = false
         releaseSource()
         narrator?.shutdown()
@@ -276,6 +381,6 @@ class MainActivity : AppCompatActivity() {
     }
     companion object {
         private const val HOST = "appassets.androidplatform.net"
-        private val ASSETS = setOf("index.html", "app.js", "core.js", "data.js", "fieldwork.js", "falling-block.svg", "directory-data.js", "directory.js", "devices.js", "campus.svg", "style.css", "source-sans-3.ttf", "ucsd.svg", "ut.svg", "uva.svg")
+        private val ASSETS = setOf("index.html", "app.js", "guide.js", "core.js", "data.js", "fieldwork.js", "falling-block.svg", "directory-data.js", "directory.js", "devices.js", "campus.svg", "style.css", "source-sans-3.ttf", "ucsd.svg", "ut.svg", "uva.svg")
     }
 }

@@ -12,15 +12,21 @@ Dedicated Meta event workspace. See [event preparation](EVENT.md) and the [submi
 - Choose interests, commuting/resident preference and a 20/40/60-minute exploration budget. Walking time is extra.
 - **Try campus life:** short activities such as finding a study spot, rehearsing a commute, looking for student projects and planning questions for an adviser. Completion is saved per campus, stop and activity.
 - **Ask a real student:** contextual conversation starters to save for later.
-- **Keep evidence:** categorize notes as Noticed, Good sign, Concern or To ask. Compare these observations across visits, then export your journal and activity progress. No accounts or paid APIs.
+- **Keep evidence:** categorize notes as Noticed, Good sign, Concern or To ask. Compare these observations across visits, then export your journal and activity progress. No accounts are needed for the offline app; live Muse answers use your server-side Meta API credits.
 
 ## Glasses support
 
 The campus experience is independent of hardware. **Audio mode** works on the phone and can use glasses exposing standard Android Bluetooth media audio. Pair in Android settings and select the glasses as media output. Check routing with Test audio. Compatibility still needs testing on each model.
 
-**Meta camera mode** is the first camera adapter, built against DAT 0.9.0. It requests Meta AI registration and permissions and captures a temporary still image. It requires a paired Android phone and Meta developer mode. Other vendors' cameras/displays need official SDK adapters and are **not integrated yet**. The shared `CaptureSource` boundary is ready for those integrations.
+**Meta mode** uses DAT 1.0.1 for the first camera adapter and experimental on-glasses speech recognition. It requests Meta AI registration and permissions and captures a temporary still image. It requires a paired Android phone and Meta developer mode. Other vendors' cameras/displays need official SDK adapters and are **not integrated yet**. The shared `CaptureSource` boundary is ready for those integrations.
+
+A Muse Spark backend now answers campus questions with supplied university facts and official-source search, scoped follow-ups and source links. Voice questions trigger spoken answers. See [AI and glasses setup](docs/AI-SETUP.md). An activated Meta API key is still required; a successful live call has not yet been verified.
 
 No phone or glasses have been attached for physical validation. Compilation is not evidence of successful pairing, capture, audio routing or microphone routing. There is no custom wake-word or screen-off operation.
+
+## Live AI
+
+Follow [AI setup](docs/AI-SETUP.md) to add the Meta key through a hidden local prompt. The default model is `muse-spark-1.3`, using the documented Meta Responses API. The key never enters web assets or the APK. The USB preview needs the computer server; untethered campus use still needs a deployed HTTPS service.
 
 ## Run
 
@@ -57,13 +63,13 @@ cd android
 
 Windows: use `gradlew.bat`. APK: `android/app/build/outputs/apk/debug/app-debug.apk`. Install on your Android phone with `adb install -r` and that path. Package: `app.trymyfuture`.
 
-For Meta Gen 2: pair in Meta AI, enable Developer Mode, install the app, open **Glasses**, choose **Meta glasses / camera + audio**, then **Connect Meta camera**. Grant Android and Meta permissions, wait for the actual ready state, then tap Capture in a visit. Select glasses as Android media output to test narration. Android speech input may use the phone microphone and the system provider's network service.
+For Meta Gen 2: pair in Meta AI, enable Developer Mode, install the app, open **Glasses**, choose **Meta glasses / voice + camera**, then **Connect Meta glasses**. Grant Android and Meta permissions, wait for the actual ready state, then tap Capture in a visit. Select glasses as Android media output to test narration. In audio mode, Android dictation may use the phone microphone and system provider. In Meta mode, the question microphone uses the experimental DAT Speech capability directly. See the setup guide for required capability grants and USB server pairing.
 
-DAT 0.9.0 is intentionally pinned to the adapter API used here; it is not a claim of the latest SDK. This is a developer-mode build, not Play Store or Meta release-channel distribution.
+DAT 1.0.1 is pinned for reproducible camera and speech integration. This is a developer-mode build, not Play Store or Meta release-channel distribution.
 
 ## What remains
 
-This is an initial functional prototype, not a finished AI tour guide. Question handling retrieves curated facts by explicit topics; it does **not** call an LLM. Photos are not identified, uploaded or stored in the journal. Students select stops manually. No admissions predictions, guaranteed building access, live opening hours or accessible-route claims are made. University endorsement is not implied.
+This is an initial functional prototype, not a finished AI tour guide. The Muse integration needs activated credits and a server key; live answers and physical glasses behavior still require validation. Offline question handling retrieves saved facts and labels them separately. Photos are not identified, uploaded or stored in the journal. Students select stops manually. No admissions predictions, guaranteed building access or accessible-route claims are made. University endorsement is not implied. See the [product standard](docs/PRODUCT-STANDARD.md) for the adoption ambition and evidence needed before promotion.
 
 Next: field validation on Android/glasses, verified campus location content, a source-grounded multimodal service with evaluation, and official adapters for additional glasses. The hackathon's exact identity, rules, submission link and deadline still need verification before actual submission.
 

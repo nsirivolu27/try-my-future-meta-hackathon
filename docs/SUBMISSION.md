@@ -13,7 +13,8 @@ Search for a school, select your interests, and start a visit. Listen through yo
 - Android app and browser preview with a compact, conversational interface with blue accents.
 - Searchable offline federal directory of 5,877 institutions, SQLite database and repeatable import with provenance.
 - Self-guided reflections and journal for listed institutions; three sourced pilot guides at UCSD, UT Austin and UVA.
-- Hardware-independent audio mode, Android narration/dictation, and the first Meta camera adapter.
+- Muse Spark 1.3 backend with campus context, official-source search citations, scoped follow-ups, cancellation and honest failure states. Live API activation/validation pending.
+- Hardware-independent audio mode, Android narration/dictation, Meta camera adapter and experimental DAT 1.0.1 glasses Speech integration. Physical validation pending.
 - Real-world campus activities, contextual questions to ask students, completion tracking, and evidence notes grouped into good signs, concerns and follow-up questions.
 - Local journal export and comparison without invented fit scores or admissions predictions.
 
@@ -21,15 +22,16 @@ Search for a school, select your interests, and start a visit. Listen through yo
 1. Search for Middlesex College in New Jersey. Show that a community college can start a self-guided visit.
 2. Switch to UVA or UCSD and show the difference: named discovery stops with official university sources.
 3. Choose an interest and start a visit. Try the activity at a stop, read the student question, mark the activity tried and save a Good sign or Concern.
-4. Ask a supported study-space question, then an unsupported tuition question; show honest fallback.
+4. With a configured and validated Meta key, ask a study-space question and a follow-up; show the actual response and university citations. Ask an unverifiable question to demonstrate the fallback. Without a key, show the explicit setup-needed state.
 5. Open Journal and Compare, then export your notes.
 6. On validated hardware only, show Meta camera capture. Clearly explain that capture does not yet recognize buildings. Without tested hardware, show the adapter UI and state that hardware validation is pending.
 
 ## What to say accurately
-AI-assisted campus exploration is the intended direction. The current prototype uses deterministic retrieval and reflection prompts; no generative model or visual recognition service is running. Bluetooth audio is conditional on device support. Meta is the only implemented camera adapter, and it has not yet been tested on physical glasses. The national directory is not a national collection of verified campus tours.
+The prototype includes a real Muse Spark API client; account activation, credits and a key are required. No successful live-model test has yet been recorded. Reflection/planning stays deterministic. There is no visual recognition service. Meta Speech is experimental and the USB server connection is only a developer preview, not untethered field operation. Bluetooth audio is conditional on device support. Meta is the only implemented camera adapter, and it has not yet been tested on physical glasses. The national directory is not a national collection of verified campus tours.
 
 ## Submission preparation still required
-- Verify exact hackathon name, eligibility, rules, deadline, allowed SDK versions and submission format from the actual invitation.
+- Confirm eligibility, final rules, allowed SDK versions and submission format. The event is the Meta Global AI Developer Hackathon; the published deadline is November 4, 2026 at 9 PM ET.
+- Activate the hackathon API credits, configure a server key, run live response evaluations and deploy an authenticated HTTPS service for untethered field use.
 - Confirm whether and when the repository must be public; currently keep it private.
 - Test real Android/Gen 2 pairing, audio, microphone routing and camera behavior.
 - Record a demo with genuine behavior, list team members and disclose reused components.

@@ -11,6 +11,6 @@ It starts from the working app at `nsirivolu27/try-my-future`, commit `a64fa34ed
 
 The initial focus is Android and Ray-Ban Meta Gen 2, while retaining hardware-independent audio mode and the nationwide campus experience.
 
-Before submission, verify the event's exact name, rules, deadline, SDK requirements and required repository visibility from the actual invitation. Test the Meta adapter on physical glasses and record only demonstrated behavior. The current prototype does not perform visual landmark recognition or call a generative model.
+The event is the Meta Global AI Developer Hackathon, October 26–November 4, 2026; the published submission deadline is November 4 at 9 PM ET ([organizer page](https://events.cerebralvalley.ai/e/meta-ai-developer-hackathon)). Confirm final rules, SDK requirements and repository visibility before submission. The new Muse Spark integration and experimental DAT Speech implementation require live API and physical-device validation. Visual landmark recognition is not implemented.
 
 This repository is private. No event submission has been sent.

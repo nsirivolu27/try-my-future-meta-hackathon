@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "app.trymyfuture"
     compileSdk = 35
+    buildFeatures { buildConfig = true }
     defaultConfig {
         applicationId = "app.trymyfuture"
         minSdk = 29
@@ -23,9 +24,9 @@ android {
 }
 kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_17 } }
 dependencies {
-    // Reuse the SDK version exercised by the existing DUO Tour integration.
-    implementation("com.meta.wearable:mwdat-core:0.9.0")
-    implementation("com.meta.wearable:mwdat-camera:0.9.0")
+    implementation("com.meta.wearable:mwdat-core:1.0.1")
+    implementation("com.meta.wearable:mwdat-camera:1.0.1")
+    implementation("com.meta.wearable:mwdat-speech:1.0.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")

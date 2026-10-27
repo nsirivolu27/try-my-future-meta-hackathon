@@ -375,3 +375,8 @@ dialog h2{font-weight:500}
 #toast{border:0;border-radius:18px;background:var(--ink);font-size:13px;box-shadow:var(--shadow)}
 @media(max-width:519px){.topbar{height:64px}.welcome{padding:8px 0 21px}.welcome h1{font-size:32px}.companion-avatar{width:50px;height:50px;margin-bottom:15px}.app-plan{padding-top:8px}.form-grid{gap:12px}.brand{font-size:18px}.app-heading{padding-top:20px}.directory-search input{font-size:14px}}
 @media(max-width:350px){#main{padding-inline:16px}.topbar{margin-inline:16px}.welcome h1{font-size:29px}.app-campus-art{width:90px}.plan-customize summary>span{display:block;margin-left:15px}.field-task h2{font-size:25px}.task-complete,.field-task>.text-button{font-size:12px;padding-inline:11px}}
+
+/* Live campus guide */
+.guide-thinking{color:var(--muted);padding-block:12px}.answer-question{color:var(--muted);font-size:.9rem}.answer-sources{display:flex;flex-wrap:wrap;gap:8px 16px}.answer-card>p{white-space:pre-line}.guide-settings{margin-top:24px;border-top:1px solid var(--line);padding-top:16px}.guide-settings summary{cursor:pointer;font-weight:600}.guide-settings input{width:100%;margin-block:8px 16px}dialog{max-height:85dvh;overflow-y:auto}
+
+.explore-intro{padding:28px 8px 20px}.explore-intro h2{font-size:1.5rem;line-height:1.2}.explore-intro>p:not(.eyebrow){color:var(--muted)}.resume-visit{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 8px;border-block:1px solid var(--line);color:var(--ink);text-decoration:none}.resume-visit small,.resume-visit strong{display:block}.resume-visit small{color:var(--muted);margin-bottom:4px}.directory-prompt{padding:24px 8px;color:var(--muted)}
